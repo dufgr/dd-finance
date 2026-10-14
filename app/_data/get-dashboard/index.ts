@@ -9,6 +9,7 @@ export const getDashboard = async (month: string) => {
   if (!userId) {
     throw new Error("Unauthorized");
   }
+  // Keep all dashboard cards and charts on the same user-scoped month range.
   const { start, end } = getMonthRange(month);
   const where = {
     userId,
@@ -50,6 +51,7 @@ export const getDashboard = async (month: string) => {
       })
     )._sum.amount,
   );
+  // An empty month has no denominator; report zero shares instead of NaN.
   const typesPercentage: TransactionPercentagePerType = {
     [TransactionType.DEPOSIT]: transactionsTotal
       ? Math.round((depositsTotal / transactionsTotal) * 100)

@@ -5,6 +5,7 @@ const localAuthBypassEnabled =
   process.env.NODE_ENV === "development" &&
   process.env.NEXT_PUBLIC_LOCAL_AUTH_BYPASS === "true";
 
+// Match the server-side auth helper: only local development can skip Clerk.
 export default localAuthBypassEnabled
   ? () => NextResponse.next()
   : clerkMiddleware();

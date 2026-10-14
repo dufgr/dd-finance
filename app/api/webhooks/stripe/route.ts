@@ -20,6 +20,7 @@ export const POST = async (request: Request) => {
     process.env.STRIPE_WEBHOOK_SECRET,
   );
 
+  // Billing events are the source of truth for the Clerk user's premium status.
   switch (event.type) {
     case "invoice.paid": {
       // Atualizar o usuário com o seu novo plano

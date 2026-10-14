@@ -33,6 +33,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="min-w-0 rounded-md border">
+      {/* Preserve readable columns on phones; the table wrapper scrolls horizontally. */}
       <Table className="min-w-[760px]">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

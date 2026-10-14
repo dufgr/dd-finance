@@ -33,6 +33,7 @@ export const upsertTransaction = async (params: UpsertTransactionParams) => {
       id: params?.id ?? "",
     },
   });
+  // Refresh both views because either one may have initiated this mutation.
   revalidatePath("/transactions");
   revalidatePath("/");
 };

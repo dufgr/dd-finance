@@ -5,6 +5,7 @@ export const getMonthRange = (month: string) => {
   }
 
   const year = new Date().getFullYear();
+  // The next month's start is exclusive, so every day in this month is included.
   return {
     start: new Date(year, monthNumber - 1, 1),
     end: new Date(year, monthNumber, 1),

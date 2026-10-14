@@ -18,6 +18,7 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
   if (!(await userHasPremiumPlan(userId))) {
     throw new Error("You need a premium plan to generate AI reports");
   }
+  // Keep local demos usable without an OpenAI key; production uses live analysis.
   if (!process.env.OPENAI_API_KEY) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return DUMMY_REPORT;
@@ -26,14 +27,13 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
   const openAi = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
-  // pegar as transações do mês recebido
+  // Scope prompt data to the signed-in user and selected calendar month.
   const transactions = await db.transaction.findMany({
     where: {
       userId,
       date: { gte: start, lt: end },
     },
   });
-  // mandar as transações para o ChatGPT e pedir para ele gerar um relatório com insights
   const content = `Gere um relatório com insights sobre as minhas finanças, com dicas e orientações de como melhorar minha vida financeira. As transações estão divididas por ponto e vírgula. A estrutura de cada uma é {DATA}-{TIPO}-{VALOR}-{CATEGORIA}. São elas:
   ${transactions
     .map(
@@ -55,6 +55,5 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
       },
     ],
   });
-  // pegar o relatório gerado pelo ChatGPT e retornar para o usuário
   return completion.choices[0].message.content;
 };

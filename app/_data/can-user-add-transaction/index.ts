@@ -9,6 +9,7 @@ export const canUserAddTransaction = async () => {
   if (await userHasPremiumPlan(userId)) {
     return true;
   }
+  // The basic plan allows ten transactions in the current calendar month.
   const currentMonthTransactions = await getCurrentMonthTransactions();
   if (currentMonthTransactions >= 10) {
     return false;
