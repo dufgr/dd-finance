@@ -46,14 +46,7 @@ const LoginPage = async () => {
         )}
       </div>
       {/* DIREITA */}
-      <div className="relative hidden min-h-screen w-full md:block">
-        <Image
-          src="/login.png"
-          alt="Faça login"
-          fill
-          className="object-cover"
-        />
-      </div>
+      <div className="relative hidden min-h-screen w-full bg-gradient-to-br from-[#55B02E]/30 via-background to-background md:block" />
     </main>
   );
 };
