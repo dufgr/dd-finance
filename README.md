@@ -44,7 +44,7 @@ O projeto não contém seed configurado. Para iniciar um banco vazio, aplique as
    cp .env.example .env
    ```
 
-   No PowerShell, use `Copy-Item .env.example .env`. Configure `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` e `CLERK_SECRET_KEY` com as credenciais de desenvolvimento do Clerk. As chaves `pk_test_replace_me` e `sk_test_replace_me` são marcadores e precisam ser substituídas para autenticar. A URL de conexão padrão já aponta para o PostgreSQL local.
+   No PowerShell, use `Copy-Item .env.example .env`. `NEXT_PUBLIC_LOCAL_AUTH_BYPASS=true` habilita um usuário de demonstração apenas durante `npm run dev`, sem exigir credenciais Clerk. O usuário local tem acesso ao plano premium de demonstração; checkout Stripe fica desabilitado. Para testar o Clerk local, defina o bypass como `false` e configure `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` e `CLERK_SECRET_KEY` com credenciais de desenvolvimento válidas. A URL de conexão padrão aponta para o PostgreSQL local.
 
 4. Suba o banco dedicado do projeto:
 
@@ -66,7 +66,7 @@ O projeto não contém seed configurado. Para iniciar um banco vazio, aplique as
    npm run dev
    ```
 
-   Acesse [http://localhost:3000](http://localhost:3000). O login local usa o ambiente de desenvolvimento do Clerk; este projeto não implementa bypass de autenticação. Stripe requer credenciais próprias para checkout/assinaturas. `OPENAI_API_KEY` é opcional para o relatório de demonstração.
+   Acesse [http://localhost:3000](http://localhost:3000). Com o bypass local habilitado, não é necessário configurar Clerk. Stripe requer credenciais próprias para checkout/assinaturas. `OPENAI_API_KEY` é opcional para o relatório de demonstração.
 
 ## Deploy na Vercel
 

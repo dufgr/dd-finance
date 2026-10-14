@@ -1,18 +1,20 @@
 import { db } from "@/app/_lib/prisma";
 import { TransactionType } from "@prisma/client";
 import { TotalExpensePerCategory, TransactionPercentagePerType } from "./types";
-import { auth } from "@clerk/nextjs/server";
+import { getCurrentUserId } from "../../_lib/auth";
+import { getMonthRange } from "../../_utils/month-range";
 
 export const getDashboard = async (month: string) => {
-  const { userId } = await auth();
+  const userId = await getCurrentUserId();
   if (!userId) {
     throw new Error("Unauthorized");
   }
+  const { start, end } = getMonthRange(month);
   const where = {
     userId,
     date: {
-      gte: new Date(`2024-${month}-01`),
-      lt: new Date(`2024-${month}-31`),
+      gte: start,
+      lt: end,
     },
   };
   const depositsTotal = Number(
@@ -49,15 +51,15 @@ export const getDashboard = async (month: string) => {
     )._sum.amount,
   );
   const typesPercentage: TransactionPercentagePerType = {
-    [TransactionType.DEPOSIT]: Math.round(
-      (Number(depositsTotal || 0) / Number(transactionsTotal)) * 100,
-    ),
-    [TransactionType.EXPENSE]: Math.round(
-      (Number(expensesTotal || 0) / Number(transactionsTotal)) * 100,
-    ),
-    [TransactionType.INVESTMENT]: Math.round(
-      (Number(investmentsTotal || 0) / Number(transactionsTotal)) * 100,
-    ),
+    [TransactionType.DEPOSIT]: transactionsTotal
+      ? Math.round((depositsTotal / transactionsTotal) * 100)
+      : 0,
+    [TransactionType.EXPENSE]: transactionsTotal
+      ? Math.round((expensesTotal / transactionsTotal) * 100)
+      : 0,
+    [TransactionType.INVESTMENT]: transactionsTotal
+      ? Math.round((investmentsTotal / transactionsTotal) * 100)
+      : 0,
   };
   const totalExpensePerCategory: TotalExpensePerCategory[] = (
     await db.transaction.groupBy({
@@ -73,9 +75,9 @@ export const getDashboard = async (month: string) => {
   ).map((category) => ({
     category: category.category,
     totalAmount: Number(category._sum.amount),
-    percentageOfTotal: Math.round(
-      (Number(category._sum.amount) / Number(expensesTotal)) * 100,
-    ),
+    percentageOfTotal: expensesTotal
+      ? Math.round((Number(category._sum.amount) / expensesTotal) * 100)
+      : 0,
   }));
   const lastTransactions = await db.transaction.findMany({
     where,
