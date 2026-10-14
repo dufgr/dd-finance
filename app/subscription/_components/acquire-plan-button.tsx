@@ -6,7 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
-const AcquirePlanButton = () => {
+const ClerkAcquirePlanButton = () => {
   const { user } = useUser();
   const handleAcquirePlanClick = async () => {
     const { sessionId } = await createStripeCheckout();
@@ -41,6 +41,22 @@ const AcquirePlanButton = () => {
       Adquirir plano
     </Button>
   );
+};
+
+const AcquirePlanButton = ({
+  localAuthBypass = false,
+}: {
+  localAuthBypass?: boolean;
+}) => {
+  if (localAuthBypass) {
+    return (
+      <p className="text-center text-sm text-muted-foreground">
+        Checkout do Stripe indisponível no modo local.
+      </p>
+    );
+  }
+
+  return <ClerkAcquirePlanButton />;
 };
 
 export default AcquirePlanButton;

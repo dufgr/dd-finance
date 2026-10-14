@@ -28,8 +28,8 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
     return "-";
   };
   return (
-    <ScrollArea className="rounded-md border">
-      <CardHeader className="flex-row items-center justify-between">
+    <ScrollArea className="min-w-0 rounded-md border">
+      <CardHeader className="flex-row flex-wrap items-center justify-between gap-3">
         <CardTitle className="font-bold">Últimas Transações</CardTitle>
         <Button variant="outline" className="rounded-full font-bold" asChild>
           <Link href="/transactions">Ver mais</Link>
@@ -39,9 +39,9 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
         {lastTransactions.map((transaction) => (
           <div
             key={transaction.id}
-            className="flex items-center justify-between"
+            className="flex min-w-0 items-center justify-between gap-3"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex min-w-0 items-center gap-3">
               <div className="rounded-lg bg-white bg-opacity-[3%] p-3 text-white">
                 <Image
                   src={`/${TRANSACTION_PAYMENT_METHOD_ICONS[transaction.paymentMethod]}`}
@@ -50,8 +50,10 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
                   alt="PIX"
                 />
               </div>
-              <div>
-                <p className="text-sm font-bold">{transaction.name}</p>
+              <div className="min-w-0">
+                <p className="break-words text-sm font-bold">
+                  {transaction.name}
+                </p>
                 <p className="text-sm text-muted-foreground">
                   {new Date(transaction.date).toLocaleDateString("pt-BR", {
                     day: "2-digit",
@@ -61,7 +63,9 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
                 </p>
               </div>
             </div>
-            <p className={`text-sm font-bold ${getAmountColor(transaction)}`}>
+            <p
+              className={`shrink-0 text-sm font-bold ${getAmountColor(transaction)}`}
+            >
               {getAmountPrefix(transaction)}
               {formatCurrency(Number(transaction.amount))}
             </p>

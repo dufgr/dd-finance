@@ -1,9 +1,9 @@
 import { db } from "@/app/_lib/prisma";
-import { auth } from "@clerk/nextjs/server";
 import { endOfMonth, startOfMonth } from "date-fns";
+import { getCurrentUserId } from "../../_lib/auth";
 
 export const getCurrentMonthTransactions = async () => {
-  const { userId } = await auth();
+  const userId = await getCurrentUserId();
   if (!userId) {
     throw new Error("Unauthorized");
   }

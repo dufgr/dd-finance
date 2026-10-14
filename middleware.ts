@@ -1,6 +1,13 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-export default clerkMiddleware();
+const localAuthBypassEnabled =
+  process.env.NODE_ENV === "development" &&
+  process.env.NEXT_PUBLIC_LOCAL_AUTH_BYPASS === "true";
+
+export default localAuthBypassEnabled
+  ? () => NextResponse.next()
+  : clerkMiddleware();
 
 export const config = {
   matcher: [

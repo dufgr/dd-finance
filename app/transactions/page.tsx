@@ -3,13 +3,13 @@ import { DataTable } from "../_components/ui/data-table";
 import { transactionColumns } from "./_columns";
 import AddTransactionButton from "../_components/add-transaction-button";
 import Navbar from "../_components/navbar";
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { ScrollArea } from "../_components/ui/scroll-area";
 import { canUserAddTransaction } from "../_data/can-user-add-transaction";
+import { getCurrentUserId } from "../_lib/auth";
 
 const TransactionsPage = async () => {
-  const { userId } = await auth();
+  const userId = await getCurrentUserId();
   if (!userId) {
     redirect("/login");
   }
@@ -25,19 +25,19 @@ const TransactionsPage = async () => {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col space-y-6 overflow-hidden p-6">
+      <main className="mx-auto flex min-h-[calc(100dvh-4.25rem)] w-full max-w-[1280px] flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
         {/* TÍTULO E BOTÃO */}
-        <div className="flex w-full items-center justify-between">
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">Transações</h1>
           <AddTransactionButton userCanAddTransaction={userCanAddTransaction} />
         </div>
-        <ScrollArea className="h-full">
+        <ScrollArea className="min-h-0 flex-1">
           <DataTable
             columns={transactionColumns}
             data={JSON.parse(JSON.stringify(transactions))}
           />
         </ScrollArea>
-      </div>
+      </main>
     </>
   );
 };

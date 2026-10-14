@@ -1,4 +1,3 @@
-import { auth, clerkClient } from "@clerk/nextjs/server";
 import Navbar from "../_components/navbar";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader } from "../_components/ui/card";
@@ -6,23 +5,28 @@ import { CheckIcon, XIcon } from "lucide-react";
 import AcquirePlanButton from "./_components/acquire-plan-button";
 import { Badge } from "../_components/ui/badge";
 import { getCurrentMonthTransactions } from "../_data/get-current-month-transactions";
+import {
+  getCurrentUserId,
+  isLocalAuthBypassEnabled,
+  userHasPremiumPlan,
+} from "../_lib/auth";
 
 const SubscriptionPage = async () => {
-  const { userId } = await auth();
+  const userId = await getCurrentUserId();
   if (!userId) {
     redirect("/login");
   }
-  const user = await clerkClient().users.getUser(userId);
   const currentMonthTransactions = await getCurrentMonthTransactions();
-  const hasPremiumPlan = user.publicMetadata.subscriptionPlan == "premium";
+  const hasPremiumPlan = await userHasPremiumPlan(userId);
+  const localAuthBypass = isLocalAuthBypassEnabled();
   return (
     <>
       <Navbar />
-      <div className="space-y-6 p-6">
+      <main className="mx-auto w-full max-w-[1280px] space-y-6 px-4 py-5 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold">Assinatura</h1>
 
-        <div className="flex gap-6">
-          <Card className="w-[450px]">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <Card className="w-full min-w-0">
             <CardHeader className="border-b border-solid py-8">
               <h2 className="text-center text-2xl font-semibold">
                 Plano Básico
@@ -47,7 +51,7 @@ const SubscriptionPage = async () => {
             </CardContent>
           </Card>
 
-          <Card className="w-[450px]">
+          <Card className="w-full min-w-0">
             <CardHeader className="relative border-b border-solid py-8">
               {hasPremiumPlan && (
                 <Badge className="absolute left-4 top-12 bg-primary/10 text-primary">
@@ -72,11 +76,11 @@ const SubscriptionPage = async () => {
                 <CheckIcon className="text-primary" />
                 <p>Relatórios de IA</p>
               </div>
-              <AcquirePlanButton />
+              <AcquirePlanButton localAuthBypass={localAuthBypass} />
             </CardContent>
           </Card>
         </div>
-      </div>
+      </main>
     </>
   );
 };

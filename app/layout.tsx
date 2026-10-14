@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import { Toaster } from "sonner";
+import { isLocalAuthBypassEnabled } from "./_lib/auth";
 
 const mulish = Mulish({
   subsets: ["latin-ext"],
@@ -19,16 +20,24 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const content = (
+    <div className="min-h-screen w-full overflow-x-clip">{children}</div>
+  );
+
   return (
     <html lang="pt-BR">
       <body className={`${mulish.className} dark antialiased`}>
-        <ClerkProvider
-          appearance={{
-            baseTheme: dark,
-          }}
-        >
-          <div className="flex h-full flex-col overflow-hidden">{children}</div>
-        </ClerkProvider>
+        {isLocalAuthBypassEnabled() ? (
+          content
+        ) : (
+          <ClerkProvider
+            appearance={{
+              baseTheme: dark,
+            }}
+          >
+            {content}
+          </ClerkProvider>
+        )}
 
         <Toaster />
       </body>
