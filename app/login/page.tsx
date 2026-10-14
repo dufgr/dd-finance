@@ -37,7 +37,7 @@ const LoginPage = async () => {
             </Link>
           </Button>
         ) : (
-          <SignInButton>
+          <SignInButton mode="redirect">
             <Button variant="outline">
               <LogInIcon className="mr-2" />
               Fazer login ou criar conta
