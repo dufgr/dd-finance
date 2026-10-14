@@ -75,7 +75,8 @@ O projeto usa o fluxo de build padrão do Next.js. Para esta implantação, conf
 - `DATABASE_URL`: URL pooled do PostgreSQL Neon para as requisições da aplicação.
 - `DIRECT_URL`: URL direta do Neon, sem `-pooler` no hostname; usada pelo Prisma para migrations.
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` e `CLERK_SECRET_KEY`: credenciais de produção do Clerk.
-- `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/` e `NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/`. Não defina `NEXT_PUBLIC_CLERK_SIGN_IN_URL` nem `NEXT_PUBLIC_CLERK_SIGN_UP_URL`: o fluxo usa o Account Portal hospedado pelo Clerk.
+- `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/` e `NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/`: não defina.
+- `NEXT_PUBLIC_CLERK_SIGN_IN_URL` nem `NEXT_PUBLIC_CLERK_SIGN_UP_URL`: o fluxo usa o Account Portal hospedado pelo Clerk, mas pode ser alterado para modal de login personalizado, se preferir.
 - `NEXT_PUBLIC_LOCAL_AUTH_BYPASS=false`, `NEXT_PUBLIC_STRIPE_ENABLED=false` e `OPENAI_ENABLED=false`.
 
 Não configure chaves Stripe nem `OPENAI_API_KEY`; sem as flags de ativação, as integrações permanecem indisponíveis. Antes do primeiro acesso, aplique as migrations ao banco de produção com `npx prisma migrate deploy`; o Prisma usa `DIRECT_URL` para essa operação. O build padrão da Vercel executa `npm run build`.
