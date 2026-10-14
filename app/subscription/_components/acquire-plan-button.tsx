@@ -45,13 +45,23 @@ const ClerkAcquirePlanButton = () => {
 
 const AcquirePlanButton = ({
   localAuthBypass = false,
+  stripeEnabled = false,
 }: {
   localAuthBypass?: boolean;
+  stripeEnabled?: boolean;
 }) => {
   if (localAuthBypass) {
     return (
       <p className="text-center text-sm text-muted-foreground">
         Checkout do Stripe indisponível no modo local.
+      </p>
+    );
+  }
+
+  if (!stripeEnabled) {
+    return (
+      <p className="text-center text-sm text-muted-foreground">
+        Assinaturas indisponíveis nesta implantação.
       </p>
     );
   }

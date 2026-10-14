@@ -4,6 +4,10 @@ import Stripe from "stripe";
 import { getCurrentUserId } from "@/app/_lib/auth";
 
 export const createStripeCheckout = async () => {
+  if (process.env.NEXT_PUBLIC_STRIPE_ENABLED !== "true") {
+    throw new Error("Stripe integration is disabled");
+  }
+
   const userId = await getCurrentUserId();
   if (!userId) {
     throw new Error("Unauthorized");

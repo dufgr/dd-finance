@@ -44,7 +44,7 @@ O projeto não contém seed configurado. Para iniciar um banco vazio, aplique as
    cp .env.example .env
    ```
 
-   No PowerShell, use `Copy-Item .env.example .env`. `NEXT_PUBLIC_LOCAL_AUTH_BYPASS=true` habilita um usuário de demonstração apenas durante `npm run dev`, sem exigir credenciais Clerk. O usuário local tem acesso ao plano premium de demonstração; checkout Stripe fica desabilitado. Para testar o Clerk local, defina o bypass como `false` e configure `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` e `CLERK_SECRET_KEY` com credenciais de desenvolvimento válidas. A URL de conexão padrão aponta para o PostgreSQL local.
+   No PowerShell, use `Copy-Item .env.example .env`. `NEXT_PUBLIC_LOCAL_AUTH_BYPASS=true` habilita um usuário de demonstração apenas durante `npm run dev`, sem exigir credenciais Clerk. Esse bypass é ignorado fora do ambiente de desenvolvimento. O usuário local tem acesso ao plano premium de demonstração; Stripe e OpenAI ficam desativados por padrão. Para testar o Clerk local, defina o bypass como `false` e configure `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` e `CLERK_SECRET_KEY` com credenciais de desenvolvimento válidas. A URL de conexão padrão aponta para o PostgreSQL local.
 
 4. Suba o banco dedicado do projeto:
 
@@ -66,8 +66,16 @@ O projeto não contém seed configurado. Para iniciar um banco vazio, aplique as
    npm run dev
    ```
 
-   Acesse [http://localhost:3000](http://localhost:3000). Com o bypass local habilitado, não é necessário configurar Clerk. Stripe requer credenciais próprias para checkout/assinaturas. `OPENAI_API_KEY` é opcional para o relatório de demonstração.
+   Acesse [http://localhost:3000](http://localhost:3000). Com o bypass local habilitado, não é necessário configurar Clerk. Sem integrações habilitadas, o checkout permanece indisponível e o relatório usa os dados de demonstração. Para habilitar Stripe, configure `NEXT_PUBLIC_STRIPE_ENABLED=true` e as credenciais Stripe; para análise real, configure `OPENAI_ENABLED=true` e `OPENAI_API_KEY`.
 
 ## Deploy na Vercel
 
-O projeto usa o fluxo de build padrão do Next.js e pode ser publicado na Vercel. Configure no projeto as variáveis de produção listadas em `.env.example`, usando credenciais de produção do Clerk, Stripe e OpenAI conforme os recursos habilitados. Para produção, use um PostgreSQL acessível pela Vercel e configure `DATABASE_URL` para esse serviço; o container local não é um banco de produção. Execute as migrations no banco de produção antes de disponibilizar a aplicação.
+O projeto usa o fluxo de build padrão do Next.js. Para esta implantação, configure na Vercel somente:
+
+- `DATABASE_URL`: URL pooled do PostgreSQL Neon para as requisições da aplicação.
+- `DIRECT_URL`: URL direta do Neon, sem `-pooler` no hostname; usada pelo Prisma para migrations.
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` e `CLERK_SECRET_KEY`: credenciais de produção do Clerk.
+- `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login`, `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/login`, `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/` e `NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/`.
+- `NEXT_PUBLIC_LOCAL_AUTH_BYPASS=false`, `NEXT_PUBLIC_STRIPE_ENABLED=false` e `OPENAI_ENABLED=false`.
+
+Não configure chaves Stripe nem `OPENAI_API_KEY`; sem as flags de ativação, as integrações permanecem indisponíveis. Antes do primeiro acesso, aplique as migrations ao banco de produção com `npx prisma migrate deploy`; o Prisma usa `DIRECT_URL` para essa operação. O build padrão da Vercel executa `npm run build`.

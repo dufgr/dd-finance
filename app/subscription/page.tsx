@@ -19,6 +19,7 @@ const SubscriptionPage = async () => {
   const currentMonthTransactions = await getCurrentMonthTransactions();
   const hasPremiumPlan = await userHasPremiumPlan(userId);
   const localAuthBypass = isLocalAuthBypassEnabled();
+  const stripeEnabled = process.env.NEXT_PUBLIC_STRIPE_ENABLED === "true";
   return (
     <>
       <Navbar />
@@ -76,7 +77,10 @@ const SubscriptionPage = async () => {
                 <CheckIcon className="text-primary" />
                 <p>Relatórios de IA</p>
               </div>
-              <AcquirePlanButton localAuthBypass={localAuthBypass} />
+              <AcquirePlanButton
+                localAuthBypass={localAuthBypass}
+                stripeEnabled={stripeEnabled}
+              />
             </CardContent>
           </Card>
         </div>

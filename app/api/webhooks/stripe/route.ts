@@ -3,8 +3,15 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 export const POST = async (request: Request) => {
+  if (process.env.NEXT_PUBLIC_STRIPE_ENABLED !== "true") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
   if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
-    return NextResponse.error();
+    return NextResponse.json(
+      { error: "Stripe webhook is not configured" },
+      { status: 503 },
+    );
   }
   const signature = request.headers.get("stripe-signature");
   if (!signature) {

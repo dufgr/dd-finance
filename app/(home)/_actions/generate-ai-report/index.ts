@@ -18,8 +18,8 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
   if (!(await userHasPremiumPlan(userId))) {
     throw new Error("You need a premium plan to generate AI reports");
   }
-  // Keep local demos usable without an OpenAI key; production uses live analysis.
-  if (!process.env.OPENAI_API_KEY) {
+  // Use the sample report unless the OpenAI integration is explicitly enabled.
+  if (process.env.OPENAI_ENABLED !== "true" || !process.env.OPENAI_API_KEY) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return DUMMY_REPORT;
   }
